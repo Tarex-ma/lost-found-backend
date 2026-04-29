@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual env
+lostfound_env/
+venv/
+
+# Env files
+.env
+
+# DB
+db.sqlite3
+
+# VS Code
+.vscode/
