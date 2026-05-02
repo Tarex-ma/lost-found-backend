@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import generics, permissions
-from .models import LostItem, FoundItem
+from .models import LostItem, FoundItem, MatchHistory
 from .serializers import LostItemSerializer, FoundItemSerializer
 from .models import ClaimRequest
 from .serializers import ClaimRequestSerializer
@@ -13,7 +13,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 from .utils import find_matches, send_match_notification
-
+from .serializers import MatchHistorySerializer
 
 User = get_user_model()
 
@@ -112,6 +112,12 @@ class FoundItemMatchView(APIView):
 
         # 🔥 Send notifications
         for lost_item in matches:
+            MatchHistory.objects.get_or_create(
+              lost_item=lost_item,
+              found_item=found_item,
+              defaults={"confidence_score": 0.8}
+       )
+        if lost_item.user.email:
             send_match_notification(
                 lost_item.user.email,
                 lost_item,
@@ -120,3 +126,8 @@ class FoundItemMatchView(APIView):
 
         serializer = LostItemSerializer(matches, many=True)
         return Response(serializer.data)
+    
+class MatchHistoryListView(generics.ListAPIView):
+    queryset = MatchHistory.objects.all()
+    serializer_class = MatchHistorySerializer
+    permission_classes = [IsAuthenticated]

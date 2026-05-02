@@ -1,5 +1,5 @@
 from rest_framework import serializers 
-from .models import User
+from .models import MatchHistory, User
 from .models import LostItem, FoundItem
 from .models import ClaimRequest
 
@@ -14,9 +14,23 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
     
 class LostItemSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+
     class Meta:
         model = LostItem
-        fields = '__all__'
+        fields = [
+            'id',
+            'title',
+            'description',
+            'category',
+            'location',
+            'date_lost',
+            'image',
+            'status',
+            'created_at',
+            'user',
+            'user_email'
+        ]
         read_only_fields = ['user', 'status', 'created_at']
 
 class FoundItemSerializer(serializers.ModelSerializer):
@@ -43,3 +57,8 @@ class ClaimRequestSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("This found item is already returned.")
 
         return data
+
+class MatchHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MatchHistory
+        fields = '__all__'

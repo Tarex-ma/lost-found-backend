@@ -24,13 +24,16 @@ class LostItem(models.Model):
     location = models.CharField(max_length=255)
     date_lost = models.DateField()
     image = models.ImageField(upload_to='lost_items/', null=True, blank=True)
-    email = models.EmailField(unique=True)
+   
 
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='open')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
+    
+    def get_queryset(self):
+        return LostItem.objects.filter(user=self.request.user)
 class FoundItem(models.Model):
     STATUS_CHOICES = (
         ('available', 'Available'),
@@ -51,6 +54,9 @@ class FoundItem(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_queryset(self):
+        return FoundItem.objects.filter(user=self.request.user)
     
 class ClaimRequest(models.Model):
     
@@ -84,3 +90,9 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"Comment by {self.user}"
+    
+class MatchHistory(models.Model):
+    lost_item = models.ForeignKey(LostItem, on_delete=models.CASCADE)
+    found_item = models.ForeignKey(FoundItem, on_delete=models.CASCADE)
+    confidence_score = models.FloatField(default=0.0)
+    created_at = models.DateTimeField(auto_now_add=True)
