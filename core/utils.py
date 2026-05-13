@@ -27,24 +27,14 @@ def find_matches(found_item):
     return final_matches[:5]
 
 
-def send_match_notification(user_email, lost_item, found_item):
-    subject = "Possible Match Found!"
-
-    message = f"""
-    Good news!
-
-    Your lost item "{lost_item.title}" may match a found item.
-
-    Found Item: {found_item.title}
-    Location: {found_item.location}
-
-    Please log in to review and claim.
-    """
+def send_match_notification(email, lost_title, found_title):
+    subject = "Match Found!"
+    message = f"We found a match:\nLost: {lost_title}\nFound: {found_title}"
 
     send_mail(
         subject,
         message,
-        'noreply@lostfound.com',
-        [user_email],
-        fail_silently=True,
+        "your_email@gmail.com",   # sender email
+        [email],
+        fail_silently=False,
     )

@@ -17,8 +17,11 @@ Including another URLconf
 from django.contrib import admin  
 from django.urls import path, include 
 from django.urls import path  
+from core.views.analytics_views import AdminDashboardView 
 
 urlpatterns = [
-     path('api/', include('core.urls')),
+    path('api/', include('core.urls')),
     path('admin/', admin.site.urls),
+    path("admin/dashboard/", AdminDashboardView.as_view()),
+
 ]
