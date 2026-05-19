@@ -22,7 +22,20 @@ class LostItemSerializer(serializers.ModelSerializer):
         read_only_fields = ['user', 'status', 'created_at']
 
 class FoundItemSerializer(serializers.ModelSerializer):
+    owner_username = serializers.CharField(source="user.username", read_only=True)
+
     class Meta:
         model = FoundItem
-        fields = '__all__'
-        read_only_fields = ['user', 'status', 'created_at']     
+        fields = [
+            "id",
+            "title",
+            "description",
+            "category",
+            "location",
+            "image",
+            "is_claimed",
+            "created_at",
+            "owner_username",
+            "user",
+        ]
+        read_only_fields = ["user", "is_claimed", "created_at"]
